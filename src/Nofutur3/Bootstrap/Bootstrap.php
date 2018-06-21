@@ -4,6 +4,7 @@ namespace Nofutur3\Bootstrap;
 
 use Nette\Configurator;
 use Nette\DI\Container;
+use Symfony\Component\Dotenv\Dotenv;
 
 class Bootstrap
 {
@@ -61,10 +62,10 @@ class Bootstrap
             $robotLoader->register();
         }
 
+        $this->loadEnv();
+
         // load config files
         $this->loadConfigFiles();
-
-        // load params (paths)
 
         return $this
             ->configurator
@@ -131,5 +132,17 @@ class Bootstrap
         foreach ($this->configFiles as $file) {
             $this->configurator->addConfig($this->paths->getConfigDir().'/'.$file);
         }
+    }
+
+    private function loadEnv()
+    {
+        if (!isset($_SERVER['APP_ENV'])) {
+            if (!class_exists(Dotenv::class)) {
+                throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
+            }
+            (new Dotenv())->load($this->paths->getRootDir().'/.env');
+        }
+        $env = $_SERVER['APP_ENV'] ?? 'dev';
+        $debug = (bool) ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env));
     }
 }

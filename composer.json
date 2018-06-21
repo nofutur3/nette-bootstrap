@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Nofutur3\\Dashboard\\": "src/"
+            "Nofutur3\\Bootstrap\\": "src/"
         }
     },
     "scripts":{
